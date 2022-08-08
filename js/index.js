@@ -5,7 +5,7 @@ class Player {
     constructor(ctx,cvs){
         this.lives=3;
         this.score=0;
-        this.scoreLayout = document.querySelector('span');
+        this.scoreLayout = document.querySelector('.display-player-info>span');
         this.posX=0;
         this.posY=140;
         this.velocityY=0;
@@ -304,5 +304,31 @@ class GameElement {
       }
 }
 
-const game = new Game();
+//const game = new Game();
 
+
+
+
+// 
+//
+// 
+// EVENT LISTENER FOR THE MENU
+// 
+// 
+// 
+
+const startBtn = document.querySelector('#start');
+const settingsBtn = document.querySelector('#settings');
+const leaderboardBtn = document.querySelector('#leaderboard');
+
+startBtn.addEventListener('click', ()=>{
+    console.log("Need to hide stuff and start the game");
+    const allHidenElements = document.querySelectorAll(".hidden-elements")
+    startBtn.classList.toggle("hidden-elements")
+    settingsBtn.classList.toggle("hidden-elements")
+    leaderboardBtn.classList.toggle("hidden-elements")
+    allHidenElements.forEach((element)=>{
+        element.classList.toggle("hidden-elements")
+    })
+    const game = new Game();
+})
