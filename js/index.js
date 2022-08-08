@@ -4,12 +4,15 @@ class Player {
 
     constructor(ctx,cvs){
         this.lives=3;
+        this.score=0;
+        this.scoreLayout = document.querySelector('span');
         this.posX=0;
         this.posY=140;
         this.velocityY=0;
         this.velocityX=0;
         this.isJumping=false;
         this.dinoImage = "../images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png";
+        this.shadowImage= "../images/dinoCharactersVersion1.1/misc/shadow_2.png"
         this.spriteSize = 24;
         this.aniframes = 6;
         this.currentFrame = 0;
@@ -17,15 +20,40 @@ class Player {
         this.startFrame = 4;
         this.framesDrawn =0;
         this.initCanvasImage ='';
+        this.shadowImageCanvas = ''
         this.context = ctx;
         this.canvas=cvs;
         this.init();
+        this.spriteWidth = this.initCanvasImage.width/24;
+        this.spriteHeight = this.initCanvasImage.height;
+        this.isTouched=false
+        this.frameSpeed=5;
+    
+
     }
 
     init() {
         const dinosaur = new Image();
+        const shadow = new Image();
         dinosaur.src = this.dinoImage;
+       
+        shadow.src= this.shadowImage;
         this.initCanvasImage = dinosaur;
+        this.shadowImageCanvas= shadow;
+       // this.context.drawImage(this.initCanvasImage,0,0,this.spriteWidth,this.spriteHeight,0,0,this.spriteWidth*2,this.spriteHeight*2);
+    }
+
+    basicRun(){
+        this.startFrame=4;
+        this.aniframes = 6;
+        this.frameSpeed=5;
+    }
+
+    getHit(){
+        this.startFrame = 13;
+        this.aniframes = 4;
+        this.currentFrame = 0;
+        this.framesDrawn =0;
     }
 
     setDinoImage(path){
@@ -36,35 +64,83 @@ class Player {
         //  this.context.drawImage(this.background,0,0,700,250);
      
        if(this.initCanvasImage) {
-           let spriteWidth = this.initCanvasImage.width/24;
-           let spriteHeight = this.initCanvasImage.height;
    
            this.currentFrame = this.currentFrame % this.aniframes;
            this.posY -= this.velocityY;
-           this.srcX = spriteWidth*(this.currentFrame+this.startFrame)
+           this.srcX = this.spriteWidth*(this.currentFrame+this.startFrame)
            
            if(this.posY<=50) this.velocityY=-4;
            if(this.posY>140){
-           this.velocityY=0;
-           this.velocityX=0
+            this.velocityY=0;
+            this.posY=140;
+            this.isJumping=false;
            }
            
            this.posX+=this.velocityX
            
    
        // ctx.drawImage(dinosaur,98,0,spriteWidth,spriteHeight,150,0,spriteWidth*2,spriteHeight*2);
-           this.context.drawImage(this.initCanvasImage,this.srcX,0,spriteWidth,spriteHeight,this.posX,this.posY,spriteWidth*2,spriteHeight*2);
+           this.context.drawImage(this.initCanvasImage,this.srcX,0,this.spriteWidth,this.spriteHeight,this.posX,this.posY,this.spriteWidth*2,this.spriteHeight*2);
+         
            this.framesDrawn++;
    
            if(this.framesDrawn>=this.frameSpeed){
                this.currentFrame++;
+               
+               this.score++;
+               this.scoreLayout.textContent=this.score;
                this.framesDrawn=0;
            }
-           
-       
+           //this.setScore()
 
        }
      }
+
+    //  setScore(){
+    //     if(this.score<10){
+    //         this.score = `000${this.score}`;
+    //     }else if (this.score<100){
+    //         this.score= `00${this.score}`;
+    //     }else if (this.score<1000){
+    //         this.score = `0${this.score}`;
+    //     }
+    //     console.log(this.score);
+    //  }
+     moveUp(){
+        this.velocityY=4;
+        this.isJumping=true;
+     }
+
+     moveRight(){
+        this.velocityX=3; 
+     }
+
+     moveLeft(){
+        this.velocityX=-3
+     }
+
+     moveDown(){
+        this.aniframes = 6;
+        this.startFrame=17;
+        this.frameSpeed=3;
+     }
+
+     left() {
+        return this.posX;
+      }
+      right() {
+        return this.posX + this.spriteWidth;
+      }
+      top() {
+        return this.posY;
+      }
+      bottom() {
+        return this.posY + this.spriteHeight;
+      }
+     
+      crashWith(obstacle) {
+        return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
+      }
 }
 
 
@@ -73,10 +149,10 @@ class Game{
         this.context = '';
         this.isStarted = false;
         this.canvas = '';
-        this.background='';
+        this.background = '';
         this.gameInit();
         this.playerOne = new Player(this.context,this.canvas);
-        this.element1 = new GameElement(this.context,this.canvas)
+        this.element1 = new GameElement(25,35,this.context,this.canvas)
         
        // this.playerTwo = new Player();
     }
@@ -106,54 +182,36 @@ class Game{
     keyboardListner(player){
         document.addEventListener('keydown', (event)=>{
             switch(event.key){
-                case 'ArrowUp':
-                    player.startFrame=4;
-                    player.aniframes = 6;
-                    player.velocityY=4;
-                    player.frameSpeed=5;
-                    console.log(event.key);
+                case 'o':
+                    if(!player.isJumping) player.moveUp();
                 break;
-                case 'ArrowDown':
-                    player.aniframes = 6;
-                    player.startFrame=17;
-                    player.frameSpeed=3;
-                    console.log(event.key);
+                case 'l':
+                    player.moveDown();
                 break;
-                case 'ArrowLeft':
-                player.velocityX=-3
-                console.log(event.key);
+                case 'k':
+                    player.moveLeft();
                 break;
-                case 'ArrowRight':
-                player.velocityX=3; 
-                console.log(event.key);
+                case 'm':
+                    player.moveRight();
                 break;
                 
                 
             }
+          //  console.log(event.key);
         })
         document.addEventListener('keyup', (event)=>{
             switch(event.key){
-                case 'ArrowDown':
+                case 'l':
                     player.startFrame=4;
                     player.aniframes  = 6;
                     player.frameSpeed=5;
-                    console.log(event.key);
                 break;
-                case 'ArrowLeft':
-                   
-                    // while(player.posY<140){
-                    //     player.velocityX-=0,7
-                    // }
+                case 'k':
                     player.velocityX=0
-                    console.log(event.key);
                 break;
-                case 'ArrowRight':
-                    // while(player.posY<140){
-                    //     player.velocityX+=0,7
-                    // }
+                case 'm':
                     player.velocityX=0
                     
-                    console.log(event.key);
                 break;
                 
                 
@@ -162,21 +220,48 @@ class Game{
     }
 
     update(){
-        this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
-        this.context.drawImage(this.background,0,0,700,250);
-        this.playerOne.animate();
-        this.element1.drawPosition(); 
-        requestAnimationFrame(() => this.update());
+
+        if(this.playerOne.lives>0){
+            if(this.playerOne.crashWith(this.element1) && !this.playerOne.isTouched){
+                console.log("touché");
+                this.playerOne.getHit()
+                setTimeout(() => {
+                    this.playerOne.lives--;
+                    this.playerOne.isTouched=false;
+                    this.playerOne.basicRun();
+                },800)
+                 this.playerOne.isTouched=true;
+               
+            }
+            
+            if(this.playerOne.score%100===0){
+                // console.log(`element fast went from ${this.element1.velocityX}`);
+                this.element1.velocityX-=0.2;
+                console.log("multiple de 100");
+                // console.log(`to ${this.element1.velocityX} ` );
+            }
+            this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
+            this.context.drawImage(this.background,0,0,700,250);
+            this.playerOne.animate();
+            this.element1.drawPosition(); 
+            requestAnimationFrame(() => this.update());
+        }else{
+            console.log("lost");
+        }
+       
+
+
+
     }
-
-
 }
 
 class GameElement {
-    constructor(ctx,canvas){
+    constructor(height, width,ctx,canvas){
+        this.height=height;
+        this.width=width
         this.posY= 145;
         this.velocityY = 0;
-        this.velocityX = -2;
+        this.velocityX = -1.8;
         this.aniframes = 6;
         this.currentFrame = 0;
         this.srcX = 0;
@@ -189,20 +274,34 @@ class GameElement {
 
     }
 
+    isOutofCanvas(){
+        if(this.posX<0)
+        return true
+    }
     drawPosition(){
         this.context.fillStyle = 'red';
-        this.context.fillRect(this.posX, this.posY, 25, 25);
-        
-        // this.framesDrawn++;
+        this.context.fillRect(this.posX, this.posY, this.height, this.width);
         this.posX+=this.velocityX
         if(this.posX<-25) this.posX=this.canvas.width;
-        // if(this.framesDrawn>=this.frameSpeed){
-        //     this.currentFrame++;
-        //     this.framesDrawn=0;
-        // }
+    
     }
 
-    
+    left() {
+        return this.posX;
+      }
+      right() {
+        return this.posX + this.width;
+      }
+      top() {
+        return this.posY;
+      }
+      bottom() {
+        return this.posY + this.height;
+      }
+     
+      crashWith(obstacle) {
+        return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
+      }
 }
 
 const game = new Game();
