@@ -152,17 +152,17 @@ class Player {
         return this.posX;
     }
     right() {
-        return this.posX + this.spriteWidth * 2;
+        return this.posX + this.spriteWidth;
     }
     top() {
         return this.posY;
     }
     bottom() {
-        return this.posY + this.spriteHeight * 2;
+        return this.posY + this.spriteHeight;
     }
 
     crashWith(obstacle) {
-        console.log("checking collisions " + this.top(), obstacle.bottom())
+
         //  return !(this.bottom() < obstacle.top() || this.top() > obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
 
         if (
@@ -175,6 +175,7 @@ class Player {
                 ||
                 this.bottom() > obstacle.top() && this.bottom() < obstacle.bottom()
             ) {
+
                 return true;
             }
         }
@@ -190,18 +191,20 @@ class Game {
         this.canvas = '';
         this.background = '';
         this.enn = 0;
-        this.maxEnnemie = 1;
+        this.maxEnnemies = 1;
+        this.nbrEnnemies = 0;
         this.gameInit();
+        this.velocityFactor = 0.2;
+        this.ennemiesOnScreen = [];
         this.playerOne = new Player(this.context, this.canvas);
-        this.element1 = new Ennemy('../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, this.context, this.canvas)
+        //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
-            new Ennemy('../images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, this.context, this.canvas), 
-            new Ennemy('../images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, this.context, this.canvas), 
-            new Ennemy('../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8, this.context, this.canvas)];
+            new Ennemy('../images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
+            new Ennemy('../images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('../images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
+            new Ennemy('../images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
+            new Ennemy('../images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
@@ -268,9 +271,9 @@ class Game {
     }
 
     update() {
-       
+
         if (this.playerOne.lives > 0) {
-            if (this.playerOne.crashWith(this.element1) && !this.playerOne.isTouched) {
+            if (this.playerOne.crashWith(this.arrayEnnemies[this.enn]) && !this.playerOne.isTouched) {
 
                 this.playerOne.getHit()
                 setTimeout(() => {
@@ -278,41 +281,54 @@ class Game {
                     this.playerOne.isTouched = false;
 
                     this.playerOne.basicRun();
-                }, 800)
+                }, 1000)
                 this.playerOne.isTouched = true;
                 this.playerOne.removeLife();
 
             }
-
-            if (this.playerOne.score % 100 === 0) {
-                this.element1.velocityX -= 0.2;
+            if (this.playerOne.score % 1000 === 0 && this.playerOne.score >1) {
+                this.velocityFactor*=1.2;
+               
+           }
+            if (this.playerOne.score % 100 === 0 && this.playerOne.score >1) {
+                this.arrayEnnemies.forEach((e)=>{
+                    e.velocityX -= this.velocityFactor;
+                    
+                })
+                
+                
             }
+           
+
+                
+            if (this.arrayEnnemies[this.enn].isOutofCanvas()) {
+                    this.arrayEnnemies[this.enn].posX = this.canvas.width;
+                    this.enn = Math.floor(Math.random() * this.arrayEnnemies.length);
+                    this.arrayEnnemies[this.enn].posY = this.arrayEnnemies[this.enn].setPosY();
+
+
+                }
+
+
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.context.drawImage(this.background, 0, 0, 700, 250);
             this.playerOne.animate();
-            this.arrayEnnemies[enn].drawPosition();
-            
-            if(en<this.arrayEnnemies.length) {
-                this.enn++;
-            }else{
-                this.enn=0;
-            }
-            requestAnimationFrame(() => this.update());
+          
+            this.arrayEnnemies[this.enn].drawPosition();
+            // requestAnimationFrame(() => this.update());
         } else {
             console.log("lost");
         }
 
-
-
-
     }
+
+
 }
 
 class GameElement {
-    constructor(ctx, canvas) {
+    constructor(ctx, canvas, fly) {
         this.height = 25;
         this.width = 35
-        this.posY = 145;
         this.velocityY = 0;
         this.velocityX = -1.8;
         this.aniframes = 6;
@@ -325,24 +341,27 @@ class GameElement {
         this.context = ctx;
         this.canvas = canvas;
         this.posX = this.canvas.width;
-
+        this.canFly = fly;
         this.context = ctx;
         this.canvas = canvas;
         this.spriteWidth = '';
         this.spriteHeight = '';
         this.frameSpeed = 5;
+        this.posY = Math.floor(this.setPosY());
 
     }
 
     isOutofCanvas() {
-        if (this.posX < 0)
-            return true
+        if (this.right() < 0) return true
+
+        return false;
+
     }
     drawPosition() {
         this.context.fillStyle = 'red';
         this.context.fillRect(this.posX, this.posY, this.height, this.width);
         this.posX += this.velocityX
-        if (this.posX < -25) this.posX = this.canvas.width;
+        //if (this.posX < -25) this.posX = this.canvas.width;
 
     }
 
@@ -362,15 +381,22 @@ class GameElement {
     crashWith(obstacle) {
         return !(this.bottom() < obstacle.top() || this.top() < obstacle.bottom() || this.right() < obstacle.left() || this.left() > obstacle.right());
     }
+    setPosY() {
+        if (this.canFly) {
+            return 70+Math.floor(Math.random()*60);
+        } else {
+            return 120;
+        }
+    }
 }
 
 class Ennemy extends GameElement {
 
-    constructor(src, col, row, frames, ctx, canv) {
-        super(ctx, canv);
+    constructor(src, col, row, frames, fly, ctx, canv) {
+        super(ctx, canv, fly);
         this.ennemiSrc = src;
         this.init()
-        this.posY = 50;
+        this.posY = Math.floor(this.setPosY());
         this.startFrame = 0;
         this.spriteHeight = this.initCanvasImage.height / row;
         this.spriteWidth = this.initCanvasImage.width / col;
@@ -392,13 +418,13 @@ class Ennemy extends GameElement {
         return this.posX;
     }
     right() {
-        return this.posX + this.spriteWidth * 2;
+        return this.posX + this.spriteWidth;
     }
     top() {
         return this.posY;
     }
     bottom() {
-        return this.posY + this.spriteHeight * 2;
+        return this.posY + this.spriteHeight;
     }
 
 
@@ -406,16 +432,14 @@ class Ennemy extends GameElement {
         if (this.initCanvasImage) {
 
             this.currentFrame = this.currentFrame % this.aniframes;
-            this.srcX = this.spriteWidth * (this.currentFrame + this.startFrame)
+            this.srcX = this.initCanvasImage.width - this.spriteWidth * (this.currentFrame + this.startFrame + 1)
 
 
             this.posX += this.velocityX
-
-
             // Save the current context  
-            this.context.save();
-            // Perform the "flip" horizontal  
-            this.context.scale(-1, 1);
+            //   this.context.save();
+            // // Perform the "flip" horizontal  
+            //  this.context.scale(-1, 1);
             // Finally we draw the image
             this.context.drawImage(
                 this.initCanvasImage,
@@ -424,13 +448,13 @@ class Ennemy extends GameElement {
                 this.spriteWidth,
                 this.spriteHeight,
                 // flipping x-coordinates
-                -this.posX,
+                this.posX,
                 this.posY,
                 this.spriteWidth * 2,
                 this.spriteHeight * 2
             )
             // And restore the context ready for the next loop  
-            this.context.restore();
+            //   this.context.restore();
 
             this.framesDrawn++;
 
@@ -440,18 +464,16 @@ class Ennemy extends GameElement {
                 this.framesDrawn = 0;
             }
             //this.setScore()
-            if (this.posX < -25) this.posX = this.canvas.width;
+            // if (this.posX < -25) this.posX = this.canvas.width;
         }
+
+
     }
 
 
 }
 
 //const game = new Game();
-
-
-
-
 // 
 //
 // 
