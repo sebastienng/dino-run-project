@@ -15,19 +15,21 @@
         <h1>Dino run</h1>
         <span>The same game as Google chrome but not the same</span>
     </header>
- <div class="display-player-info hidden-elements">
-    <!-- <h3>Player 1</h3> -->
-    <!-- <div class="player-charater"> <img src="" alt="" srcset=""></div> -->
-    <span></span>
- </div>
-    <div id="left part"></div>
-
-    <canvas class="hidden-elements" id="canvas-player1" width="700" height="250"></canvas>
+ 
+    <div id="game-div">
+        <div class="display-player-info hidden-elements">
+            <!-- <h3>Player 1</h3> -->
+            <!-- <div class="player-charater"> <img src="" alt="" srcset=""></div> -->
+            <span></span>
+            <div id="lives-display"></div>
+         </div>
+     <canvas class="hidden-elements" id="canvas-player1" width="700" height="250"></canvas>
+    </div>  
     <div id="button-start-settings">
         <button id="start">Start</button>
         <button id="settings">Settings</button>
     </div>
-    <div><button id="leaderboard">LeaderBoard</button></div>
+    <div><button id="leaderboard">LeaderBoard</button><button class="hidden-elements" id="replay">Replay</button></div>
  </section>
  
 </body>
