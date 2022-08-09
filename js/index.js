@@ -62,7 +62,7 @@ class Player {
     removeLife() {
         const livesDiv = document.querySelector("#lives-display")
         const life = document.querySelector('.lives')
-        console.log(life);
+
         livesDiv.removeChild(life)
     }
 
@@ -119,16 +119,7 @@ class Player {
         }
     }
 
-    //  setScore(){
-    //     if(this.score<10){
-    //         this.score = `000${this.score}`;
-    //     }else if (this.score<100){
-    //         this.score= `00${this.score}`;
-    //     }else if (this.score<1000){
-    //         this.score = `0${this.score}`;
-    //     }
-    //     console.log(this.score);
-    //  }
+
     moveUp() {
         this.velocityY = 5;
         this.isJumping = true;
@@ -230,6 +221,33 @@ class Game {
 
 
     }
+
+    getEndGameMenu() {
+        const getElements = document.querySelectorAll(".hidden-elements.end-game");
+
+        const getinfo = document.querySelector(".display-player-info>span");
+        const scoreFinal = getinfo.textContent;
+        getinfo.classList.toggle("hidden-elements")
+        document.cookie = `${Date.now()}= ${scoreFinal}`
+
+        getElements.forEach((e) => {
+            e.classList.toggle("hidden-elements")
+        })
+        const showScore = document.querySelector(".game-ending-screen>div>span")
+        showScore.innerHTML = ` Sad but you lost. Your Score is : ${scoreFinal}. <br><br>Wanna play again ?`
+        //const getEndgame = document.querySelectorAll(".hidden-elements.")
+    }
+    resetGame() {
+        const getinfo = document.querySelector(".display-player-info>span");
+        getinfo.classList.toggle("hidden-elements")
+        this.canvas.classList.toggle("hidden-elements")
+
+        const getElements = document.querySelectorAll(".end-game");
+        getElements.forEach((e) => {
+            e.classList.toggle("hidden-elements")
+        })
+    }
+
     keyboardListner(player) {
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
@@ -248,7 +266,7 @@ class Game {
 
 
             }
-            //  console.log(event.key);
+
         })
         document.addEventListener('keyup', (event) => {
             switch (event.key) {
@@ -286,38 +304,43 @@ class Game {
                 this.playerOne.removeLife();
 
             }
-            if (this.playerOne.score % 1000 === 0 && this.playerOne.score >1) {
-                this.velocityFactor*=1.2;
-               
-           }
-            if (this.playerOne.score % 100 === 0 && this.playerOne.score >1) {
-                this.arrayEnnemies.forEach((e)=>{
-                    e.velocityX -= this.velocityFactor;
-                    
-                })
-                
-                
+            if (this.playerOne.score % 1000 === 0 && this.playerOne.score > 1) {
+                this.velocityFactor *= 1.2;
+                this.playerOne.life++;
+
             }
-           
+            if (this.playerOne.score % 100 === 0 && this.playerOne.score > 1) {
+                this.arrayEnnemies.forEach((e) => {
+                    e.velocityX -= this.velocityFactor;
 
-                
+                })
+
+
+            }
+
+
+
             if (this.arrayEnnemies[this.enn].isOutofCanvas()) {
-                    this.arrayEnnemies[this.enn].posX = this.canvas.width;
-                    this.enn = Math.floor(Math.random() * this.arrayEnnemies.length);
-                    this.arrayEnnemies[this.enn].posY = this.arrayEnnemies[this.enn].setPosY();
+                this.arrayEnnemies[this.enn].posX = this.canvas.width;
+                this.enn = Math.floor(Math.random() * this.arrayEnnemies.length);
+                this.arrayEnnemies[this.enn].posY = this.arrayEnnemies[this.enn].setPosY();
 
 
-                }
+            }
 
 
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             this.context.drawImage(this.background, 0, 0, 700, 250);
             this.playerOne.animate();
-          
+
             this.arrayEnnemies[this.enn].drawPosition();
-            // requestAnimationFrame(() => this.update());
+            requestAnimationFrame(() => this.update());
         } else {
-            console.log("lost");
+
+            this.canvas.classList.toggle("hidden-elements")
+            this.getEndGameMenu();
+
+
         }
 
     }
@@ -383,7 +406,7 @@ class GameElement {
     }
     setPosY() {
         if (this.canFly) {
-            return 70+Math.floor(Math.random()*60);
+            return 70 + Math.floor(Math.random() * 60);
         } else {
             return 120;
         }
@@ -486,11 +509,12 @@ const startBtn = document.querySelector('#start');
 const settingsBtn = document.querySelector('#settings');
 const leaderboardBtn = document.querySelector('#leaderboard');
 const replayBtn = document.querySelector('#replay');
+const getlbDiv = document.querySelector(".leaderboard-display");
 let game = '';
 
 startBtn.addEventListener('click', () => {
 
-    const allHidenElements = document.querySelectorAll(".hidden-elements")
+    const allHidenElements = document.querySelectorAll(".hidden-elements.game")
     startBtn.classList.toggle("hidden-elements")
     settingsBtn.classList.toggle("hidden-elements")
     leaderboardBtn.classList.toggle("hidden-elements")
@@ -500,5 +524,44 @@ startBtn.addEventListener('click', () => {
     game = new Game();
 })
 replayBtn.addEventListener('click', () => {
+    game.resetGame();
     game = new Game();
+})
+
+leaderboardBtn.addEventListener('click', () => {
+
+
+    if (leaderboardBtn.textContent === "Hide") {
+        leaderboardBtn.textContent = "LeaderBoard"
+        getlbDiv.innerHTML = ''
+    } else {
+        leaderboardBtn.textContent = "Hide";
+        getlbDiv.innerHTML = ''
+    }
+    getlbDiv.classList.toggle("hidden-elements")
+    if (document.cookie.length !== 0) {
+        const arrayofcookie = document.cookie.split(";")
+        const arrayofScore = [];
+
+        arrayofcookie.forEach((e) => {
+            arrayofScore.push(e.split('=')[1]);
+        })
+
+        arrayofScore.sort((a, b) => b - a);
+
+        let i = 1;
+
+        for (score of arrayofScore) {
+            
+            if (i <=10) {
+                getlbDiv.innerHTML += `TOP ${i} = ${score}pts<br>`;
+                i++;
+            }
+        }
+    
+
+}else {
+    getlbDiv.textContent = "No data here. Try to play a bit lol."
+}
+    
 })
