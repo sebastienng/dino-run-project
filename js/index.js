@@ -209,7 +209,7 @@ class Game {
 
 
         const background = new Image();
-        background.src = "../images/temporary-background.jpg";
+        background.src = "images/temporary-background.jpg";
 
 
         this.background = background;
