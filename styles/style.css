@@ -67,7 +67,19 @@ canvas{
     width: 15px;
     height: 17px;
     margin: 1px;
+    
+}
+.lives.douxy{
     background-image: url("../images/dinoCharactersVersion1.1/sheets/doux lives.png");
+}
+.lives.tardy{
+    background-image: url("../images/dinoCharactersVersion1.1/sheets/tard lives.png");
+}
+.lives.morty{
+    background-image: url("../images/dinoCharactersVersion1.1/sheets/mort\ lives.png");
+}
+.lives.vity{
+    background-image: url("../images/dinoCharactersVersion1.1/sheets/vita\ lives.png");
 }
 
 .display-player-info{
@@ -120,13 +132,21 @@ canvas{
 
 
 }
-/* 
-@keyframes slide {
-    from {
-      transform: translateX(0);
-    }
+#select-character{
+    display: flex;
+    gap : 2rem;
 
-} */
+}
+.dino-display{
+    display: flex;
+    flex-direction: column;
+
+}
+
+.dino-display img{
+    width: 100px;
+    image-rendering: -moz-crisp-edges; 
+}
 .hidden-elements{
     display: none;
 }

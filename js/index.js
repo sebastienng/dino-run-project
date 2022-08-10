@@ -2,7 +2,8 @@
 
 class Player {
 
-    constructor(ctx, cvs) {
+    constructor(dinoName, dino, ctx, cvs) {
+        this.dinoName = dinoName;
         this.lives = 3;
         this.score = 0;
         this.scoreLayout = document.querySelector('.display-player-info>span');
@@ -11,7 +12,7 @@ class Player {
         this.velocityY = 0;
         this.velocityX = 0;
         this.isJumping = false;
-        this.dinoImage = "images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png";
+        this.dinoImage = dino;
         this.shadowImage = "images/dinoCharactersVersion1.1/misc/shadow_2.png"
         this.spriteSize = 24;
         this.aniframes = 6;
@@ -19,7 +20,7 @@ class Player {
         this.srcX = 0;
         this.startFrame = 4;
         this.framesDrawn = 0;
-        this.initCanvasImage = '';
+        this.initCanvasImage = dino;
         this.shadowImageCanvas = ''
         this.context = ctx;
         this.canvas = cvs;
@@ -37,13 +38,13 @@ class Player {
 
     init() {
 
-        const dinosaur = new Image();
-        const shadow = new Image();
-        dinosaur.src = this.dinoImage;
+        // const dinosaur = new Image();
+        // const shadow = new Image();
+        // dinosaur.src = this.dinoImage;
 
-        shadow.src = this.shadowImage;
-        this.initCanvasImage = dinosaur;
-        this.shadowImageCanvas = shadow;
+        // shadow.src = this.shadowImage;
+        // this.initCanvasImage = dino;
+        // this.shadowImageCanvas = shadow;
         this.addLife(this.lives);
         // this.context.drawImage(this.initCanvasImage,0,0,this.spriteWidth,this.spriteHeight,0,0,this.spriteWidth*2,this.spriteHeight*2);
     }
@@ -51,9 +52,30 @@ class Player {
     addLife(life) {
         const livesDiv = document.querySelector("#lives-display")
         // livesDiv.innerHTML='';
+        // let dinoClass = ''
+        // switch (this.dinoName) {
+        //     case 'douxy':
+        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png';
+        //         break;
+        //     case 'tardy':
+        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
+        //         break;
+        //     case 'morty':
+        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
+        //         console.log("object");
+        //         break;
+        //     case 'vity':
+        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
+        //         break;
+
+        //     default:
+        //         break;
+        // }
+
         for (let i = 0; i < life; i++) {
             const newDiv = document.createElement('div')
             newDiv.classList.add('lives')
+            newDiv.classList.add(`${this.dinoName}`)
             livesDiv.appendChild(newDiv)
         }
 
@@ -196,7 +218,9 @@ class Player {
 
 
 class Game {
-    constructor() {
+    constructor(dino) {
+        this.pickedDino = this.getDinoImage(dino);
+        this.dinoSource = ''
         this.context = '';
         this.isStarted = false;
         this.canvas = '';
@@ -204,13 +228,13 @@ class Game {
         this.enn = 0;
         this.maxEnnemies = 1;
         this.nbrEnnemies = 0;
-        this.gameInit();
+        this.gameInit(dino);
         this.velocityFactor = 0.2;
         this.splitBackground = 0;
         this.backgroundSpeed = 2;
         this.ennemiesOnScreen = [];
 
-        this.playerOne = new Player(this.context, this.canvas);
+        this.playerOne = new Player(dino, this.dinoSource, this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
             new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
@@ -221,7 +245,30 @@ class Game {
             new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
-    //this function 
+    //this function
+    getDinoImage(dino) {
+        let urlDino = '';
+        console.log(dino);
+        switch (dino) {
+            case 'douxy':
+                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png';
+                break;
+            case 'tardy':
+                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
+                break;
+            case 'morty':
+                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
+                console.log("object");
+                break;
+            case 'vity':
+                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
+                break;
+
+            default:
+                break;
+        }
+        return urlDino;
+    }
     gameInit() {
         const can = document.querySelector("#canvas-player1");
 
@@ -232,14 +279,21 @@ class Game {
 
 
         const background = new Image();
+        const dinosaur = new Image();
+
+        dinosaur.src = this.pickedDino;
+
+
+        // this.initCanvasImage = dinosaur;
+
         background.src = "images/temporary-background.jpg";
 
-
+        this.dinoSource = dinosaur
 
         this.background = background;
         this.background.width = 0;
-
-        background.onload = () => {
+        console.log(this.dinoSource);
+        this.dinoSource.onload = () => {
             this.keyboardListner(this.playerOne)
             this.update();
         }
@@ -247,6 +301,8 @@ class Game {
 
 
     }
+
+
 
     getEndGameMenu() {
         const getElements = document.querySelectorAll(".hidden-elements.end-game");
@@ -454,7 +510,6 @@ class GameElement {
         this.context.fillStyle = 'red';
         this.context.fillRect(this.posX, this.posY, this.height, this.width);
         this.posX += this.velocityX
-        //if (this.posX < -25) this.posX = this.canvas.width;
 
     }
 
@@ -531,18 +586,13 @@ class Ennemy extends GameElement {
 
 
             this.posX += this.velocityX
-            // Save the current context  
-            //   this.context.save();
-            // // Perform the "flip" horizontal  
-            //  this.context.scale(-1, 1);
-            // Finally we draw the image
+
             this.context.drawImage(
                 this.initCanvasImage,
                 this.srcX,
                 this.srcY,
                 this.spriteWidth,
                 this.spriteHeight,
-                // flipping x-coordinates
                 this.posX,
                 this.posY,
                 this.spriteWidth * 2,
@@ -582,22 +632,57 @@ const settingsBtn = document.querySelector('#settings');
 const leaderboardBtn = document.querySelector('#leaderboard');
 const replayBtn = document.querySelector('#replay');
 const getlbDiv = document.querySelector(".leaderboard-display");
+const getCharacMenu = document.querySelector('#select-character');
+const children = getCharacMenu.querySelectorAll('.hidden-elements');
+const dinoBtns = document.querySelectorAll(".start-game")
+const canvas = document.querySelector('canvas')
 let game = '';
 
-startBtn.addEventListener('click', () => {
+dinoBtns.forEach((e) => {
+    e.addEventListener('click', () => {
+        console.log(e.classList);
+        children.forEach((e) => {
+            e.classList.toggle('hidden-elements')
 
-    const allHidenElements = document.querySelectorAll(".hidden-elements.game")
+        })
+        document.querySelector('.display-player-info').classList.toggle('hidden-elements')
+        // document.querySelector('#')
+        canvas.classList.toggle('hidden-elements')
+        game = new Game(e.classList[1])
+
+    })
+})
+startBtn.addEventListener('click', () => {
     startBtn.classList.toggle("hidden-elements")
     settingsBtn.classList.toggle("hidden-elements")
     leaderboardBtn.classList.toggle("hidden-elements")
-    allHidenElements.forEach((element) => {
-        element.classList.toggle("hidden-elements")
+
+    getCharacMenu.classList.toggle('hidden-elements');
+
+
+    children.forEach((e) => {
+        e.classList.toggle('hidden-elements')
+
     })
-    game = new Game();
+
 })
+
+
+
+// startBtn.addEventListener('click', () => {
+
+//     const allHidenElements = document.querySelectorAll(".hidden-elements.game")
+//     startBtn.classList.toggle("hidden-elements")
+//     settingsBtn.classList.toggle("hidden-elements")
+//     leaderboardBtn.classList.toggle("hidden-elements")
+//     allHidenElements.forEach((element) => {
+//         element.classList.toggle("hidden-elements")
+//     })
+//     game = new Game();
+// })
 replayBtn.addEventListener('click', () => {
     game.resetGame();
-    game = new Game();
+    game = new Game(game.pickedDino);
 })
 
 leaderboardBtn.addEventListener('click', () => {

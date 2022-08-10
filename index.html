@@ -1,46 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script defer src="./js/index.js"></script>
-    <link rel="stylesheet" href="./styles/style.css">
+    <link rel="stylesheet" href="./styles/style.css" />
     <title>Dino Run Project</title>
-</head>
-<body>
-
- <section>
-    <header>
+  </head>
+  <body>
+    <section>
+      <header>
         <h1>Dino run</h1>
         <span>The same game as Google chrome but not the same</span>
-    </header>
-    
-    <div id="game-div hidden-elements">
-        <div class="display-player-info hidden-elements game">
-            <!-- <h3>Player 1</h3> -->
-            <!-- <div class="player-charater"> <img src="" alt="" srcset=""></div> -->
-            <span></span>
-            <div id="lives-display"></div>
-         </div>
-        <canvas class="hidden-elements game" id="canvas-player1" width="700" height="250"></canvas>
-        <div class="game-ending-screen hidden-elements end-game">
-            <div> <span></span></div>
-            <div>
-            <button class="hidden-elements end-game" id="replay">Replay</button>
-            <button class="hidden-elements end-game" id="back" onClick="window.location.reload();">Back to menu</button>
-            </div>
-        </div>
-    </div>  
+      </header>
 
-    <div id="button-start-settings" class="start-menu">
+      <div id="game-div hidden-elements">
+        <div class="display-player-info hidden-elements game">
+          <!-- <h3>Player 1</h3> -->
+          <!-- <div class="player-charater"> <img src="" alt="" srcset=""></div> -->
+          <span></span>
+          <div id="lives-display"></div>
+        </div>
+        <canvas
+          class="hidden-elements game"
+          id="canvas-player1"
+          width="700"
+          height="250"
+        ></canvas>
+        <div class="game-ending-screen hidden-elements end-game">
+          <div><span></span></div>
+          <div>
+            <button class="hidden-elements end-game" id="replay">Replay</button>
+            <button
+              class="hidden-elements end-game"
+              id="back"
+              onClick="window.location.reload();"
+            >
+              Back to menu
+            </button>
+          </div>
+        </div>
+      </div>
+      <div id="select-character" class="hidden-elements">
+        <div class="hidden-elements dino-display">
+          <img
+            src="images/dinoCharactersVersion1.1/gifs/DinoSprites_doux.gif"
+            alt=""
+            srcset=""
+            class="hidden-elements"
+          />
+          <button class="hidden-elements start-game douxy">Douxy</button>
+        </div>
+        <div class="hidden-elements dino-display">
+          <img
+            src="images/dinoCharactersVersion1.1/gifs/DinoSprites_tard.gif"
+            alt=""
+            srcset=""
+          />
+          <button class="hidden-elements start-game tardy">Tardy</button>
+        </div>
+        <div class="hidden-elements dino-display">
+          <img
+            src="images/dinoCharactersVersion1.1/gifs/DinoSprites_mort.gif"
+            alt=""
+            srcset=""
+          />
+          <button class="hidden-elements start-game morty">Morty</button>
+        </div>
+
+        <div class="hidden-elements dino-display">
+          <img
+            src="images/dinoCharactersVersion1.1/gifs/DinoSprites_vita.gif"
+            alt=""
+            srcset=""
+          />
+          <button class="hidden-elements start-game vity">Vity</button>
+        </div>
+      </div>
+
+      <div id="button-start-settings" class="start-menu">
         <button id="start">Play</button>
         <button id="settings">Settings</button>
-    </div>
-    
-    <div><button id="leaderboard" class="start-menu">LeaderBoard</button></div>
-    <div class="leaderboard-display hidden-elements"></div>
- </section>
- 
-</body>
+      </div>
+
+      <div>
+        <button id="leaderboard" class="start-menu">LeaderBoard</button>
+      </div>
+      <div class="leaderboard-display hidden-elements"></div>
+    </section>
+  </body>
 </html>
