@@ -190,12 +190,12 @@ class Game {
         this.playerOne = new Player(this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
-            new Ennemy('../images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
-            new Ennemy('../images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
+            new Ennemy('./../images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
+            new Ennemy('./../images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('./../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('./../images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
+            new Ennemy('./../images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
+            new Ennemy('./../images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
@@ -229,7 +229,7 @@ class Game {
         const scoreFinal = getinfo.textContent;
         getinfo.classList.toggle("hidden-elements")
         document.cookie = `${Date.now()}= ${scoreFinal}`
-
+        localStorage.setItem(`${Date.now()}`,` ${scoreFinal}`)
         getElements.forEach((e) => {
             e.classList.toggle("hidden-elements")
         })
@@ -539,13 +539,15 @@ leaderboardBtn.addEventListener('click', () => {
         getlbDiv.innerHTML = ''
     }
     getlbDiv.classList.toggle("hidden-elements")
+    console.log(localStorage);
     if (document.cookie.length !== 0) {
-        const arrayofcookie = document.cookie.split(";")
+    
+        const arrayofcookie = localStorage;
         const arrayofScore = [];
 
-        arrayofcookie.forEach((e) => {
-            arrayofScore.push(e.split('=')[1]);
-        })
+        for(player in arrayofcookie) {
+            arrayofScore.push(player.value);
+        }
 
         arrayofScore.sort((a, b) => b - a);
 
