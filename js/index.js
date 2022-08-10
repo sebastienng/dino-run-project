@@ -6,7 +6,7 @@ class Player {
         this.lives = 3;
         this.score = 0;
         this.scoreLayout = document.querySelector('.display-player-info>span');
-        this.posX = 0;
+        this.posX = 3;
         this.posY = 140;
         this.velocityY = 0;
         this.velocityX = 0;
@@ -27,7 +27,10 @@ class Player {
         this.spriteWidth = this.initCanvasImage.width / 24;
         this.spriteHeight = this.initCanvasImage.height;
         this.isTouched = false
-        this.frameSpeed = 5;
+        this.isMoving = false;
+        this.isSprinting = false;
+        this.frameSpeed = 6;
+
 
 
     }
@@ -41,28 +44,23 @@ class Player {
         shadow.src = this.shadowImage;
         this.initCanvasImage = dinosaur;
         this.shadowImageCanvas = shadow;
-        this.initLives();
+        this.addLife(this.lives);
         // this.context.drawImage(this.initCanvasImage,0,0,this.spriteWidth,this.spriteHeight,0,0,this.spriteWidth*2,this.spriteHeight*2);
     }
-    initLives() {
+
+    addLife(life) {
         const livesDiv = document.querySelector("#lives-display")
-        for (let i = 0; i < this.lives; i++) {
+        // livesDiv.innerHTML='';
+        for (let i = 0; i < life; i++) {
             const newDiv = document.createElement('div')
             newDiv.classList.add('lives')
             livesDiv.appendChild(newDiv)
         }
-    }
 
-    addLife() {
-        const livesDiv = document.querySelector("#lives-display")
-        const newDiv = document.createElement('div')
-        newDiv.classList.add('lives')
-        livesDiv.appendChild(newDiv)
     }
     removeLife() {
         const livesDiv = document.querySelector("#lives-display")
         const life = document.querySelector('.lives')
-
         livesDiv.removeChild(life)
     }
 
@@ -99,7 +97,14 @@ class Player {
                 this.isJumping = false;
             }
 
-            this.posX += this.velocityX
+
+
+
+            const nextX = this.posX + this.velocityX
+            if (nextX > 0 && nextX < this.canvas.width - 50) {
+                this.posX = nextX
+            }
+
 
 
             // ctx.drawImage(dinosaur,98,0,spriteWidth,spriteHeight,150,0,spriteWidth*2,spriteHeight*2);
@@ -110,7 +115,7 @@ class Player {
             if (this.framesDrawn >= this.frameSpeed) {
                 this.currentFrame++;
 
-                this.score++;
+                this.updateScore();
                 this.scoreLayout.textContent = this.score;
                 this.framesDrawn = 0;
             }
@@ -119,6 +124,16 @@ class Player {
         }
     }
 
+    updateScore() {
+        this.score++;
+        if (this.isSprinting) this.score += 4;
+
+        if (this.score % 1000 === 0 && this.score > 1) {
+            this.velocityFactor += 0.1;
+            this.lives++;
+            this.addLife(1);
+        }
+    }
 
     moveUp() {
         this.velocityY = 5;
@@ -126,11 +141,17 @@ class Player {
     }
 
     moveRight() {
-        this.velocityX = 3;
+
+        this.velocityX = 2;
+
+
     }
 
     moveLeft() {
-        this.velocityX = -3
+
+        this.velocityX = -2;
+
+
     }
 
     moveDown() {
@@ -185,17 +206,21 @@ class Game {
         this.maxEnnemies = 1;
         this.nbrEnnemies = 0;
         this.gameInit();
-        this.velocityFactor = 0.2;
+        this.velocityFactor = 0.1;
+        this.splitBackground = 0;
+        this.backgroundSpeed = 2;
         this.ennemiesOnScreen = [];
+        this.tempVel = this.velocityFactor;
+        this.previousSpeed = this.backgroundSpeed;
         this.playerOne = new Player(this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
-            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8,1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4,0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4,0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8,1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5,1, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5,1, false, this.context, this.canvas)];
+            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 1, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
@@ -212,7 +237,10 @@ class Game {
         background.src = "images/temporary-background.jpg";
 
 
+
         this.background = background;
+        this.background.width = 0;
+
         background.onload = () => {
             this.keyboardListner(this.playerOne)
             this.update();
@@ -228,8 +256,7 @@ class Game {
         const getinfo = document.querySelector(".display-player-info>span");
         const scoreFinal = getinfo.textContent;
         getinfo.classList.toggle("hidden-elements")
-        document.cookie = `${Date.now()}= ${scoreFinal}`
-        localStorage.setItem(`${Date.now()}`,` ${scoreFinal}`)
+        localStorage.setItem(`${Date.now()}`, ` ${scoreFinal}`)
         getElements.forEach((e) => {
             e.classList.toggle("hidden-elements")
         })
@@ -253,15 +280,34 @@ class Game {
             switch (event.key) {
                 case 'o':
                     if (!player.isJumping) player.moveUp();
+
                     break;
                 case 'l':
+
                     player.moveDown();
+                    if (!player.isSprinting) {
+                        this.tempVel = this.arrayEnnemies[0].velocityX;
+                        this.previousSpeed = this.backgroundSpeed;
+                        this.arrayEnnemies.forEach((e) => {
+                            e.velocityX *= 4
+                        })
+                        this.backgroundSpeed *= 3;
+                        player.isSprinting = true;
+                    }
+
+
                     break;
                 case 'k':
+
+                    //if(player.posX>0 && player.isMoving){
                     player.moveLeft();
+                    console.log("my pos: " + player.posX);
+
+                    //   }
                     break;
                 case 'm':
                     player.moveRight();
+                    console.log("my pos: " + player.posX);
                     break;
 
 
@@ -271,14 +317,23 @@ class Game {
         document.addEventListener('keyup', (event) => {
             switch (event.key) {
                 case 'l':
+
                     player.startFrame = 4;
                     player.aniframes = 6;
                     player.frameSpeed = 5;
+                    player.isSprinting = false;
+                    this.backgroundSpeed = this.previousSpeed;
+                    this.arrayEnnemies.forEach((e) => {
+                        e.velocityX = this.tempVel
+                    })
+
                     break;
                 case 'k':
+                    player.isMoving = false;
                     player.velocityX = 0
                     break;
                 case 'm':
+                    player.isMoving = false;
                     player.velocityX = 0
 
                     break;
@@ -304,17 +359,14 @@ class Game {
                 this.playerOne.removeLife();
 
             }
-            if (this.playerOne.score % 1000 === 0 && this.playerOne.score > 1) {
-                this.velocityFactor *= 1.2;
-                this.playerOne.life++;
 
-            }
+            //console.log(this.playerOne.lives);
+
             if (this.playerOne.score % 100 === 0 && this.playerOne.score > 1) {
                 this.arrayEnnemies.forEach((e) => {
                     e.velocityX -= this.velocityFactor;
-
                 })
-
+                this.backgroundSpeed += this.velocityFactor;
 
             }
 
@@ -330,8 +382,10 @@ class Game {
 
 
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.context.drawImage(this.background, 0, 0, 700, 250);
-            this.playerOne.animate();
+
+            //this.context.drawImage(this.background, 0, 0, 700, 250);
+            this.backgroundDraw();
+            if (0 < this.playerOne.posX < this.canvas.width) this.playerOne.animate();
 
             this.arrayEnnemies[this.enn].drawPosition();
             requestAnimationFrame(() => this.update());
@@ -345,6 +399,33 @@ class Game {
 
     }
 
+    backgroundDraw() {
+        //console.log(this.background.width);
+        this.context.drawImage(this.background, this.splitBackground, 0, 700, 250);
+
+        // draw image 2
+        this.context.drawImage(this.background, this.splitBackground - 700, 0, 700, 250);
+
+        // update image height
+
+        this.splitBackground -= this.backgroundSpeed;
+
+        if (this.splitBackground < 0) {
+            this.splitBackground += this.canvas.width;
+        }
+
+
+        console.log(`background : ${this.background.width} et canvas : ${this.canvas.width}`);
+        //resetting the images when the first image entirely exits the screen
+        // if (this.background.width>=1400){
+        //     this.background.width = 0;
+        //     console.log('here');
+        // }
+
+
+
+    }
+
 
 }
 
@@ -353,7 +434,7 @@ class GameElement {
         this.height = 25;
         this.width = 35
         this.velocityY = 0;
-        this.velocityX = -1.8;
+        this.velocityX = -2;
         this.aniframes = 6;
         this.currentFrame = 0;
         this.srcX = 0;
@@ -415,17 +496,17 @@ class GameElement {
 
 class Ennemy extends GameElement {
 
-    constructor(src, col, row, frames, spRow=0 , fly, ctx, canv) {
+    constructor(src, col, row, frames, spRow = 0, fly, ctx, canv) {
         super(ctx, canv, fly);
         this.ennemiSrc = src;
         this.init()
-        
+
         this.posY = Math.floor(this.setPosY());
         this.startFrame = 0;
         this.spriteHeight = this.initCanvasImage.height / row;
         this.spriteWidth = this.initCanvasImage.width / col;
         this.aniframes = frames;
-        this.srcY = this.spriteHeight*spRow;
+        this.srcY = this.spriteHeight * spRow;
 
     }
 
@@ -541,37 +622,37 @@ leaderboardBtn.addEventListener('click', () => {
         getlbDiv.innerHTML = ''
     }
     getlbDiv.classList.toggle("hidden-elements")
-   // console.log(localStorage);
+    // console.log(localStorage);
     if (localStorage.length !== 0) {
-        
-    
+
+
         const arrayofcookie = localStorage;
         const arrayofScore = [];
 
-        for(theplayer in arrayofcookie) {
+        for (theplayer in arrayofcookie) {
             // if(typeof theplayer === 'number') {
-                arrayofScore.push(localStorage.getItem(theplayer));
-               
+            arrayofScore.push(localStorage.getItem(theplayer));
+
             // }
 
-            
+
         }
-        
+
         arrayofScore.sort((a, b) => b - a);
 
         let i = 1;
 
         for (score of arrayofScore) {
             //console.log(score);
-            if (i <=10 && score !=null) {
+            if (i <= 10 && score != null) {
                 getlbDiv.innerHTML += `TOP ${i} = ${score}pts<br>`;
                 i++;
             }
         }
-    
 
-}else {
-    getlbDiv.textContent = "No data here. Try to play a bit lol."
-}
-    
+
+    } else {
+        getlbDiv.textContent = "No data here. Try to play a bit lol."
+    }
+
 })

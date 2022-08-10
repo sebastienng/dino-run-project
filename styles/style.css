@@ -112,11 +112,21 @@ canvas{
     height: 250px;
 
    background-color: aqua;
+  
+    /* background: url('../images/temporary-background.jpg');
+    background-size:contain;
+   
+    animation: slide 3s linear infinite; */
+
 
 }
+/* 
+@keyframes slide {
+    from {
+      transform: translateX(0);
+    }
 
-
-
+} */
 .hidden-elements{
     display: none;
 }
