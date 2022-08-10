@@ -126,10 +126,9 @@ class Player {
 
     updateScore() {
         this.score++;
-        if (this.isSprinting) this.score += 4;
+        if (this.isSprinting) this.score++;
 
         if (this.score % 1000 === 0 && this.score > 1) {
-            this.velocityFactor += 0.1;
             this.lives++;
             this.addLife(1);
         }
@@ -149,7 +148,7 @@ class Player {
 
     moveLeft() {
 
-        this.velocityX = -2;
+        this.velocityX = -4;
 
 
     }
@@ -219,7 +218,7 @@ class Game {
             new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
             new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
             new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 1, false, this.context, this.canvas)];
+            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
@@ -362,6 +361,7 @@ class Game {
             }
 
             //console.log(this.playerOne.lives);
+            //  if (this.playerOne.score % 1000 === 0) this.velocityFactor += 0.1;
 
             if (this.playerOne.score % 100 === 0 && this.playerOne.score > 1) {
                 this.arrayEnnemies.forEach((e) => {
