@@ -206,12 +206,11 @@ class Game {
         this.maxEnnemies = 1;
         this.nbrEnnemies = 0;
         this.gameInit();
-        this.velocityFactor = 0.1;
+        this.velocityFactor = 0.2;
         this.splitBackground = 0;
         this.backgroundSpeed = 2;
         this.ennemiesOnScreen = [];
-        this.tempVel = this.velocityFactor;
-        this.previousSpeed = this.backgroundSpeed;
+
         this.playerOne = new Player(this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
@@ -274,7 +273,9 @@ class Game {
             e.classList.toggle("hidden-elements")
         })
     }
-
+    getVelocity() {
+        return Math.floor(this.playerOne.score / 100)
+    }
     keyboardListner(player) {
         document.addEventListener('keydown', (event) => {
             switch (event.key) {
@@ -286,12 +287,11 @@ class Game {
 
                     player.moveDown();
                     if (!player.isSprinting) {
-                        this.tempVel = this.arrayEnnemies[0].velocityX;
-                        this.previousSpeed = this.backgroundSpeed;
                         this.arrayEnnemies.forEach((e) => {
-                            e.velocityX *= 4
+                            e.velocityX = - 6 + (this.getVelocity() * this.velocityFactor);
+                            e.frameSpeed = 3;
                         })
-                        this.backgroundSpeed *= 3;
+                        this.backgroundSpeed = 6 + (this.getVelocity() * this.velocityFactor);;
                         player.isSprinting = true;
                     }
 
@@ -301,13 +301,13 @@ class Game {
 
                     //if(player.posX>0 && player.isMoving){
                     player.moveLeft();
-                    console.log("my pos: " + player.posX);
+
 
                     //   }
                     break;
                 case 'm':
                     player.moveRight();
-                    console.log("my pos: " + player.posX);
+
                     break;
 
 
@@ -322,9 +322,10 @@ class Game {
                     player.aniframes = 6;
                     player.frameSpeed = 5;
                     player.isSprinting = false;
-                    this.backgroundSpeed = this.previousSpeed;
+                    this.backgroundSpeed = 2 + (this.getVelocity() * this.velocityFactor);
                     this.arrayEnnemies.forEach((e) => {
-                        e.velocityX = this.tempVel
+                        e.velocityX = -2 - (this.getVelocity() * this.velocityFactor);
+                        e.frameSpeed = 6;
                     })
 
                     break;
@@ -380,7 +381,7 @@ class Game {
 
             }
 
-
+            console.log(`${this.playerOne.score} for ${this.getVelocity()}`);
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             //this.context.drawImage(this.background, 0, 0, 700, 250);
@@ -415,15 +416,6 @@ class Game {
         }
 
 
-        console.log(`background : ${this.background.width} et canvas : ${this.canvas.width}`);
-        //resetting the images when the first image entirely exits the screen
-        // if (this.background.width>=1400){
-        //     this.background.width = 0;
-        //     console.log('here');
-        // }
-
-
-
     }
 
 
@@ -450,7 +442,7 @@ class GameElement {
         this.canvas = canvas;
         this.spriteWidth = '';
         this.spriteHeight = '';
-        this.frameSpeed = 5;
+        this.frameSpeed = 6;
         this.posY = Math.floor(this.setPosY());
 
     }
