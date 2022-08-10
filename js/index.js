@@ -190,12 +190,12 @@ class Game {
         this.playerOne = new Player(this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
-            new Ennemy('./../images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
-            new Ennemy('./../images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('./../images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('./../images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
-            new Ennemy('./../images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
-            new Ennemy('./../images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
+            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
