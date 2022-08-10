@@ -286,11 +286,7 @@ class Game {
 
                     player.moveDown();
                     if (!player.isSprinting) {
-                        this.arrayEnnemies.forEach((e) => {
-                            e.velocityX = - 6 + (this.getVelocity() * this.velocityFactor);
-                            e.frameSpeed = 3;
-                        })
-                        this.backgroundSpeed = 6 + (this.getVelocity() * this.velocityFactor);;
+                        this.setVelocityElement(2);
                         player.isSprinting = true;
                     }
 
@@ -319,13 +315,10 @@ class Game {
 
                     player.startFrame = 4;
                     player.aniframes = 6;
-                    player.frameSpeed = 5;
+                    player.frameSpeed = 6;
                     player.isSprinting = false;
-                    this.backgroundSpeed = 2 + (this.getVelocity() * this.velocityFactor);
-                    this.arrayEnnemies.forEach((e) => {
-                        e.velocityX = -2 - (this.getVelocity() * this.velocityFactor);
-                        e.frameSpeed = 6;
-                    })
+
+                    this.setVelocityElement();
 
                     break;
                 case 'k':
@@ -361,14 +354,10 @@ class Game {
             }
 
             //console.log(this.playerOne.lives);
-            //  if (this.playerOne.score % 1000 === 0) this.velocityFactor += 0.1;
+
 
             if (this.playerOne.score % 100 === 0 && this.playerOne.score > 1) {
-                this.arrayEnnemies.forEach((e) => {
-                    e.velocityX -= this.velocityFactor;
-                })
-                this.backgroundSpeed += this.velocityFactor;
-
+                this.setVelocityElement();
             }
 
 
@@ -381,7 +370,7 @@ class Game {
 
             }
 
-            console.log(`${this.playerOne.score} for ${this.getVelocity()}`);
+            console.log(`${this.arrayEnnemies[0].velocityX} for ${this.getVelocity()} @ ${this.playerOne.score}`);
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             //this.context.drawImage(this.background, 0, 0, 700, 250);
@@ -397,6 +386,14 @@ class Game {
 
 
         }
+
+    }
+    setVelocityElement(factor = 1) {
+        this.arrayEnnemies.forEach((e) => {
+            e.velocityX = -3 * factor - (this.getVelocity() * this.velocityFactor);
+            e.frameSpeed = 6 / factor;
+        })
+        this.backgroundSpeed = 3 * factor + (this.getVelocity() * this.velocityFactor);
 
     }
 
@@ -426,7 +423,7 @@ class GameElement {
         this.height = 25;
         this.width = 35
         this.velocityY = 0;
-        this.velocityX = -2;
+        this.velocityX = -3;
         this.aniframes = 6;
         this.currentFrame = 0;
         this.srcX = 0;
