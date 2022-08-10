@@ -11,8 +11,8 @@ class Player {
         this.velocityY = 0;
         this.velocityX = 0;
         this.isJumping = false;
-        this.dinoImage = "../images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png";
-        this.shadowImage = "../images/dinoCharactersVersion1.1/misc/shadow_2.png"
+        this.dinoImage = "images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png";
+        this.shadowImage = "images/dinoCharactersVersion1.1/misc/shadow_2.png"
         this.spriteSize = 24;
         this.aniframes = 6;
         this.currentFrame = 0;
@@ -190,12 +190,12 @@ class Game {
         this.playerOne = new Player(this.context, this.canvas);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
         this.arrayEnnemies = [
-            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 5, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 4, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, false, this.context, this.canvas)];
+            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8,1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4,0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4,0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8,1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5,1, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5,1, false, this.context, this.canvas)];
         // this.playerTwo = new Player();
     }
     //this function 
@@ -415,15 +415,17 @@ class GameElement {
 
 class Ennemy extends GameElement {
 
-    constructor(src, col, row, frames, fly, ctx, canv) {
+    constructor(src, col, row, frames, spRow=0 , fly, ctx, canv) {
         super(ctx, canv, fly);
         this.ennemiSrc = src;
         this.init()
+        
         this.posY = Math.floor(this.setPosY());
         this.startFrame = 0;
         this.spriteHeight = this.initCanvasImage.height / row;
         this.spriteWidth = this.initCanvasImage.width / col;
         this.aniframes = frames;
+        this.srcY = this.spriteHeight*spRow;
 
     }
 
@@ -467,7 +469,7 @@ class Ennemy extends GameElement {
             this.context.drawImage(
                 this.initCanvasImage,
                 this.srcX,
-                0,
+                this.srcY,
                 this.spriteWidth,
                 this.spriteHeight,
                 // flipping x-coordinates
@@ -539,23 +541,29 @@ leaderboardBtn.addEventListener('click', () => {
         getlbDiv.innerHTML = ''
     }
     getlbDiv.classList.toggle("hidden-elements")
-    console.log(localStorage);
-    if (document.cookie.length !== 0) {
+   // console.log(localStorage);
+    if (localStorage.length !== 0) {
+        
     
         const arrayofcookie = localStorage;
         const arrayofScore = [];
 
-        for(player in arrayofcookie) {
-            arrayofScore.push(player.value);
-        }
+        for(theplayer in arrayofcookie) {
+            // if(typeof theplayer === 'number') {
+                arrayofScore.push(localStorage.getItem(theplayer));
+               
+            // }
 
+            
+        }
+        
         arrayofScore.sort((a, b) => b - a);
 
         let i = 1;
 
         for (score of arrayofScore) {
-            
-            if (i <=10) {
+            //console.log(score);
+            if (i <=10 && score !=null) {
                 getlbDiv.innerHTML += `TOP ${i} = ${score}pts<br>`;
                 i++;
             }
