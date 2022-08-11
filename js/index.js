@@ -27,6 +27,23 @@ preLoadDino[0].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.
 preLoadDino[1].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
 preLoadDino[2].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
 preLoadDino[3].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
+
+const preLoadEnnemies = [new Image(),
+new Image(),
+new Image(),
+new Image(),
+new Image(),
+new Image()]
+
+
+preLoadEnnemies[0].src = 'images/ennemies sprites/Akaname Sprite Sheet.png';
+preLoadEnnemies[1].src = 'images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png';
+preLoadEnnemies[2].src = 'images/ennemies sprites/Dragonfly Sprite Sheet.png';
+preLoadEnnemies[3].src = 'images/ennemies sprites/Intellect Devourer Sprites.png';
+preLoadEnnemies[4].src = 'images/ennemies sprites/Jellyfish Sprite Sheet.png';
+preLoadEnnemies[5].src = 'images/ennemies sprites/Porcupine Sprite Sheet.png'
+
+
 console.log(preLoadDino);
 let game = '';
 
@@ -49,9 +66,10 @@ dinoBtns.forEach((e) => {
 startBtn.addEventListener('click', () => {
     startBtn.classList.toggle("hidden-elements")
     settingsBtn.classList.toggle("hidden-elements")
+
     leaderboardBtn.classList.toggle("hidden-elements")
     getCharacMenu.classList.toggle('hidden-elements');
-
+    getlbDiv.innerHTML = ''
 
     children.forEach((e) => {
         e.classList.toggle('hidden-elements')
@@ -357,7 +375,7 @@ class Game {
         this.velocityFactor = 0.2;
         this.splitBackground = 0;
         this.backgroundSpeed = 2;
-        this.ennemiesOnScreen = [];
+        this.arrayEnnemies = [];
         this.elementSpeed = 3;
         // console.log(dino, this.pickedDino);
         this.gameInit(dino);
@@ -410,14 +428,21 @@ class Game {
 
         this.playerOne = new Player(dino, this.pickedDino, this.context, this.canvas);
         this.keyboardListner(this.playerOne)
+        // this.arrayEnnemies = [
+        //     new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
+        //     new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+        //     new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+        //     new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
+        //     new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
+        //     new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
         this.arrayEnnemies = [
-            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
-        this.update();
+            new Ennemy(preLoadEnnemies[0], 8, 4, 8, 1, false, this.context, this.canvas),
+            new Ennemy(preLoadEnnemies[1], 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy(preLoadEnnemies[2], 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy(preLoadEnnemies[3], 8, 6, 8, 1, false, this.context, this.canvas),
+            new Ennemy(preLoadEnnemies[4], 7, 5, 5, 1, true, this.context, this.canvas),
+            new Ennemy(preLoadEnnemies[5], 5, 5, 5, 3, false, this.context, this.canvas)];
+        this.update()
 
 
 
@@ -459,22 +484,19 @@ class Game {
     }
     keyboardListner(player) {
         document.addEventListener('keydown', (event) => {
+
             switch (event.key) {
-                case 'o':
+                case 'i':
                     if (!player.isJumping) player.moveUp();
-
                     break;
-                case 'l':
-
+                case 'k':
                     player.moveDown();
                     if (!player.isSprinting) {
                         this.setVelocityElement(2);
                         player.isSprinting = true;
                     }
-
-
                     break;
-                case 'k':
+                case 'j':
 
                     //if(player.posX>0 && player.isMoving){
                     player.moveLeft();
@@ -482,7 +504,7 @@ class Game {
 
                     //   }
                     break;
-                case 'm':
+                case 'l':
                     player.moveRight();
 
                     break;
@@ -493,7 +515,7 @@ class Game {
         })
         document.addEventListener('keyup', (event) => {
             switch (event.key) {
-                case 'l':
+                case 'k':
 
                     player.startFrame = 4;
                     player.aniframes = 6;
@@ -503,11 +525,11 @@ class Game {
                     this.setVelocityElement();
 
                     break;
-                case 'k':
+                case 'j':
                     player.isMoving = false;
                     player.velocityX = 0
                     break;
-                case 'm':
+                case 'l':
                     player.isMoving = false;
                     player.velocityX = 0
 
@@ -672,7 +694,7 @@ class Ennemy extends GameElement {
     constructor(src, col, row, frames, spRow = 0, fly, ctx, canv) {
         super(ctx, canv, fly);
         this.ennemiSrc = src;
-        this.init()
+        this.init(src)
 
         this.posY = Math.floor(this.setPosY());
         this.startFrame = 0;
@@ -683,12 +705,9 @@ class Ennemy extends GameElement {
 
     }
 
-    init() {
-        const myImage = new Image();
+    init(src) {
 
-        myImage.src = this.ennemiSrc;
-
-        this.initCanvasImage = myImage;
+        this.initCanvasImage = src;
 
         // this.context.drawImage(this.initCanvasImage,0,0,this.spriteWidth,this.spriteHeight,0,0,this.spriteWidth*2,this.spriteHeight*2);
     }
