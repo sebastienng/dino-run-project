@@ -8,8 +8,9 @@
 // 
 
 const startBtn = document.querySelector('#start');
-const settingsBtn = document.querySelector('#settings');
+// const settingsBtn = document.querySelector('#settings');
 const leaderboardBtn = document.querySelector('#leaderboard');
+const commands = document.querySelector('.commands');
 const replayBtn = document.querySelector('#replay');
 const getlbDiv = document.querySelector(".leaderboard-display");
 const getCharacMenu = document.querySelector('#select-character');
@@ -56,7 +57,10 @@ dinoBtns.forEach((e) => {
         })
         document.querySelector('.display-player-info').classList.toggle('hidden-elements')
         // document.querySelector('#')
+
         canvas.classList.toggle('hidden-elements')
+        getCharacMenu.classList.toggle('hidden-elements');
+        commands.classList.toggle("hidden-elements")
         //console.log(preLoadDino[3]);
         game = new Game(e.classList[1])
 
@@ -65,10 +69,11 @@ dinoBtns.forEach((e) => {
 })
 startBtn.addEventListener('click', () => {
     startBtn.classList.toggle("hidden-elements")
-    settingsBtn.classList.toggle("hidden-elements")
+    // settingsBtn.classList.toggle("hidden-elements")
 
     leaderboardBtn.classList.toggle("hidden-elements")
     getCharacMenu.classList.toggle('hidden-elements');
+
     getlbDiv.innerHTML = ''
 
     children.forEach((e) => {

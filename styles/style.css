@@ -46,6 +46,8 @@ button:hover {
     box-shadow: 7px 7px 1px -5px #000000;
 
 }
+
+
 button:hover{
     cursor: pointer;
 }
@@ -135,10 +137,10 @@ canvas{
 
    background-color: aqua;
   
-    /* background: url('../images/temporary-background.jpg');
+    background: url('../images/temporary-background.jpg');
     background-size:contain;
    
-    animation: slide 3s linear infinite; */
+    animation: slide 3s linear infinite;
 
 
 }
@@ -150,14 +152,56 @@ canvas{
 .dino-display{
     display: flex;
     flex-direction: column;
+    align-items: center;
+
+    padding : 1.2rem;
 
 }
 
 .dino-display img{
     width: 100px;
-    image-rendering: -moz-crisp-edges; 
+   
 }
+img {
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges; 
+}
+.commands{
+    display: flex;
+    width: 10rem;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    text-align: center;
+    font-size: 10px;
+}
+#bottom-keys{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap:0.5rem;
+    
+}
+#top-keys{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.commands img{
+    width: 30px;
+}
+
+.command-key{
+    display: flex;
+    flex-direction: column;
+   
+    align-items: center;
+   
+}
+
 .hidden-elements{
-    display: none;
+    display: none !important;
 }
 
