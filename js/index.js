@@ -1,3 +1,147 @@
+//const game = new Game();
+// 
+//
+// 
+// EVENT LISTENER FOR THE MENU
+// 
+// 
+// 
+
+const startBtn = document.querySelector('#start');
+const settingsBtn = document.querySelector('#settings');
+const leaderboardBtn = document.querySelector('#leaderboard');
+const replayBtn = document.querySelector('#replay');
+const getlbDiv = document.querySelector(".leaderboard-display");
+const getCharacMenu = document.querySelector('#select-character');
+const children = getCharacMenu.querySelectorAll('.hidden-elements');
+const dinoBtns = document.querySelectorAll(".start-game")
+const canvas = document.querySelector('canvas')
+
+const preLoadDino = [new Image(),
+new Image(),
+new Image(),
+new Image()]
+
+
+preLoadDino[0].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png';
+preLoadDino[1].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
+preLoadDino[2].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
+preLoadDino[3].src = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
+console.log(preLoadDino);
+let game = '';
+
+dinoBtns.forEach((e) => {
+    e.addEventListener('click', () => {
+
+        children.forEach((e) => {
+            e.classList.toggle('hidden-elements')
+
+        })
+        document.querySelector('.display-player-info').classList.toggle('hidden-elements')
+        // document.querySelector('#')
+        canvas.classList.toggle('hidden-elements')
+        //console.log(preLoadDino[3]);
+        game = new Game(e.classList[1])
+
+
+    })
+})
+startBtn.addEventListener('click', () => {
+    startBtn.classList.toggle("hidden-elements")
+    settingsBtn.classList.toggle("hidden-elements")
+    leaderboardBtn.classList.toggle("hidden-elements")
+    getCharacMenu.classList.toggle('hidden-elements');
+
+
+    children.forEach((e) => {
+        e.classList.toggle('hidden-elements')
+
+    })
+
+})
+
+
+
+// startBtn.addEventListener('click', () => {
+
+//     const allHidenElements = document.querySelectorAll(".hidden-elements.game")
+//     startBtn.classList.toggle("hidden-elements")
+//     settingsBtn.classList.toggle("hidden-elements")
+//     leaderboardBtn.classList.toggle("hidden-elements")
+//     allHidenElements.forEach((element) => {
+//         element.classList.toggle("hidden-elements")
+//     })
+//     game = new Game();
+// })
+replayBtn.addEventListener('click', () => {
+    game.resetGame();
+    game = new Game(game.playerOne.dinoName);
+})
+
+leaderboardBtn.addEventListener('click', () => {
+
+
+    if (leaderboardBtn.textContent === "Hide") {
+        leaderboardBtn.textContent = "LeaderBoard"
+        getlbDiv.innerHTML = ''
+    } else {
+        leaderboardBtn.textContent = "Hide";
+        getlbDiv.innerHTML = ''
+    }
+    getlbDiv.classList.toggle("hidden-elements")
+    // console.log(localStorage);
+    if (localStorage.length !== 0) {
+
+
+        const arrayofcookie = localStorage;
+        const arrayofScore = [];
+
+        for (theplayer in arrayofcookie) {
+            // if(typeof theplayer === 'number') {
+            arrayofScore.push(localStorage.getItem(theplayer));
+
+            // }
+
+
+        }
+
+        arrayofScore.sort((a, b) => b - a);
+
+        let i = 1;
+
+        for (score of arrayofScore) {
+            //console.log(score);
+            if (i <= 10 && score != null) {
+                getlbDiv.innerHTML += `TOP ${i} = ${score}pts<br>`;
+                i++;
+            }
+        }
+
+
+    } else {
+        getlbDiv.textContent = "No data here. Try to play a bit lol."
+    }
+
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Player {
@@ -51,27 +195,6 @@ class Player {
 
     addLife(life) {
         const livesDiv = document.querySelector("#lives-display")
-        // livesDiv.innerHTML='';
-        // let dinoClass = ''
-        // switch (this.dinoName) {
-        //     case 'douxy':
-        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png';
-        //         break;
-        //     case 'tardy':
-        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
-        //         break;
-        //     case 'morty':
-        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
-        //         console.log("object");
-        //         break;
-        //     case 'vity':
-        //         dinoClass = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
-        //         break;
-
-        //     default:
-        //         break;
-        // }
-
         for (let i = 0; i < life; i++) {
             const newDiv = document.createElement('div')
             newDiv.classList.add('lives')
@@ -148,7 +271,8 @@ class Player {
 
     updateScore() {
         this.score++;
-        if (this.isSprinting) this.score++;
+
+        // if (this.isSprinting) this.score++;
 
         if (this.score % 1000 === 0 && this.score > 1) {
             this.lives++;
@@ -157,7 +281,7 @@ class Player {
     }
 
     moveUp() {
-        this.velocityY = 5;
+        this.velocityY = 7;
         this.isJumping = true;
     }
 
@@ -185,13 +309,13 @@ class Player {
         return this.posX;
     }
     right() {
-        return this.posX + this.spriteWidth;
+        return this.posX + this.spriteWidth - 5;
     }
     top() {
         return this.posY;
     }
     bottom() {
-        return this.posY + this.spriteHeight;
+        return this.posY + this.spriteHeight - 5;
     }
 
     crashWith(obstacle) {
@@ -219,7 +343,7 @@ class Player {
 
 class Game {
     constructor(dino) {
-        this.pickedDino = this.getDinoImage(dino);
+        this.pickedDino = this.getDinoImage(dino)
         this.dinoSource = ''
         this.context = '';
         this.isStarted = false;
@@ -228,48 +352,45 @@ class Game {
         this.enn = 0;
         this.maxEnnemies = 1;
         this.nbrEnnemies = 0;
-        this.gameInit(dino);
+        this.playerOne = null;
+
         this.velocityFactor = 0.2;
         this.splitBackground = 0;
         this.backgroundSpeed = 2;
         this.ennemiesOnScreen = [];
-
-        this.playerOne = new Player(dino, this.dinoSource, this.context, this.canvas);
+        this.elementSpeed = 3;
+        // console.log(dino, this.pickedDino);
+        this.gameInit(dino);
         //this.element1 = new Ennemy('../images/ennemies sprites/Shardsoul Slayer Sprite Sheet.png', 8, 5, 8,false, this.context, this.canvas)
-        this.arrayEnnemies = [
-            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
-            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
+
         // this.playerTwo = new Player();
     }
     //this function
     getDinoImage(dino) {
-        let urlDino = '';
-        console.log(dino);
+        let src = '';
+
         switch (dino) {
             case 'douxy':
-                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - doux.png';
+                src = preLoadDino[0];
                 break;
             case 'tardy':
-                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - tard.png';
+                src = preLoadDino[1];
                 break;
             case 'morty':
-                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - mort.png';
-                console.log("object");
+                src = preLoadDino[2];
                 break;
             case 'vity':
-                urlDino = 'images/dinoCharactersVersion1.1/sheets/DinoSprites - vita.png';
-                break;
+                src = preLoadDino[3];
 
             default:
+
                 break;
         }
-        return urlDino;
+
+
+        return src;
     }
-    gameInit() {
+    gameInit(dino) {
         const can = document.querySelector("#canvas-player1");
 
         const ctx = can.getContext("2d");
@@ -279,24 +400,26 @@ class Game {
 
 
         const background = new Image();
-        const dinosaur = new Image();
-
-        dinosaur.src = this.pickedDino;
-
-
         // this.initCanvasImage = dinosaur;
 
         background.src = "images/temporary-background.jpg";
-
-        this.dinoSource = dinosaur
+        //console.log(this.pickedDino);
 
         this.background = background;
-        this.background.width = 0;
-        console.log(this.dinoSource);
-        this.dinoSource.onload = () => {
-            this.keyboardListner(this.playerOne)
-            this.update();
-        }
+
+
+        this.playerOne = new Player(dino, this.pickedDino, this.context, this.canvas);
+        this.keyboardListner(this.playerOne)
+        this.arrayEnnemies = [
+            new Ennemy('images/ennemies sprites/Akaname Sprite Sheet.png', 8, 4, 8, 1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Brain Mole Monarch Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Dragonfly Sprite Sheet.png', 7, 4, 4, 0, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Intellect Devourer Sprites.png', 8, 6, 8, 1, false, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Jellyfish Sprite Sheet.png', 7, 5, 5, 1, true, this.context, this.canvas),
+            new Ennemy('images/ennemies sprites/Porcupine Sprite Sheet.png', 5, 5, 5, 3, false, this.context, this.canvas)];
+        this.update();
+
+
 
 
 
@@ -328,8 +451,11 @@ class Game {
             e.classList.toggle("hidden-elements")
         })
     }
-    getVelocity() {
+    getVelocityFactor() {
         return Math.floor(this.playerOne.score / 100)
+    }
+    increaseSpeed() {
+        this.elementSpeed += 0.2;
     }
     keyboardListner(player) {
         document.addEventListener('keydown', (event) => {
@@ -394,6 +520,7 @@ class Game {
 
     update() {
 
+
         if (this.playerOne.lives > 0) {
             if (this.playerOne.crashWith(this.arrayEnnemies[this.enn]) && !this.playerOne.isTouched) {
 
@@ -415,7 +542,9 @@ class Game {
             if (this.playerOne.score % 100 === 0 && this.playerOne.score > 1) {
                 this.setVelocityElement();
             }
-
+            if (this.playerOne.score % 1000 === 0) {
+                this.increaseSpeed();
+            }
 
 
             if (this.arrayEnnemies[this.enn].isOutofCanvas()) {
@@ -426,7 +555,7 @@ class Game {
 
             }
 
-            console.log(`${this.arrayEnnemies[0].velocityX} for ${this.getVelocity()} @ ${this.playerOne.score}`);
+            // console.log(`${this.arrayEnnemies[0].velocityX} for ${this.getVelocityFactor()} @ ${this.playerOne.score}`);
             this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
             //this.context.drawImage(this.background, 0, 0, 700, 250);
@@ -446,10 +575,10 @@ class Game {
     }
     setVelocityElement(factor = 1) {
         this.arrayEnnemies.forEach((e) => {
-            e.velocityX = -3 * factor - (this.getVelocity() * this.velocityFactor);
-            e.frameSpeed = 6 / factor;
+            e.velocityX = -this.elementSpeed * factor - (this.getVelocityFactor() * this.velocityFactor);
+            e.frameSpeed = this.elementSpeed * 2 / factor;
         })
-        this.backgroundSpeed = 3 * factor + (this.getVelocity() * this.velocityFactor);
+        this.backgroundSpeed = this.elementSpeed * factor + (this.getVelocityFactor() * this.velocityFactor);
 
     }
 
@@ -618,115 +747,3 @@ class Ennemy extends GameElement {
 
 }
 
-//const game = new Game();
-// 
-//
-// 
-// EVENT LISTENER FOR THE MENU
-// 
-// 
-// 
-
-const startBtn = document.querySelector('#start');
-const settingsBtn = document.querySelector('#settings');
-const leaderboardBtn = document.querySelector('#leaderboard');
-const replayBtn = document.querySelector('#replay');
-const getlbDiv = document.querySelector(".leaderboard-display");
-const getCharacMenu = document.querySelector('#select-character');
-const children = getCharacMenu.querySelectorAll('.hidden-elements');
-const dinoBtns = document.querySelectorAll(".start-game")
-const canvas = document.querySelector('canvas')
-let game = '';
-
-dinoBtns.forEach((e) => {
-    e.addEventListener('click', () => {
-        console.log(e.classList);
-        children.forEach((e) => {
-            e.classList.toggle('hidden-elements')
-
-        })
-        document.querySelector('.display-player-info').classList.toggle('hidden-elements')
-        // document.querySelector('#')
-        canvas.classList.toggle('hidden-elements')
-        game = new Game(e.classList[1])
-
-    })
-})
-startBtn.addEventListener('click', () => {
-    startBtn.classList.toggle("hidden-elements")
-    settingsBtn.classList.toggle("hidden-elements")
-    leaderboardBtn.classList.toggle("hidden-elements")
-
-    getCharacMenu.classList.toggle('hidden-elements');
-
-
-    children.forEach((e) => {
-        e.classList.toggle('hidden-elements')
-
-    })
-
-})
-
-
-
-// startBtn.addEventListener('click', () => {
-
-//     const allHidenElements = document.querySelectorAll(".hidden-elements.game")
-//     startBtn.classList.toggle("hidden-elements")
-//     settingsBtn.classList.toggle("hidden-elements")
-//     leaderboardBtn.classList.toggle("hidden-elements")
-//     allHidenElements.forEach((element) => {
-//         element.classList.toggle("hidden-elements")
-//     })
-//     game = new Game();
-// })
-replayBtn.addEventListener('click', () => {
-    game.resetGame();
-    game = new Game(game.pickedDino);
-})
-
-leaderboardBtn.addEventListener('click', () => {
-
-
-    if (leaderboardBtn.textContent === "Hide") {
-        leaderboardBtn.textContent = "LeaderBoard"
-        getlbDiv.innerHTML = ''
-    } else {
-        leaderboardBtn.textContent = "Hide";
-        getlbDiv.innerHTML = ''
-    }
-    getlbDiv.classList.toggle("hidden-elements")
-    // console.log(localStorage);
-    if (localStorage.length !== 0) {
-
-
-        const arrayofcookie = localStorage;
-        const arrayofScore = [];
-
-        for (theplayer in arrayofcookie) {
-            // if(typeof theplayer === 'number') {
-            arrayofScore.push(localStorage.getItem(theplayer));
-
-            // }
-
-
-        }
-
-        arrayofScore.sort((a, b) => b - a);
-
-        let i = 1;
-
-        for (score of arrayofScore) {
-            //console.log(score);
-            if (i <= 10 && score != null) {
-                getlbDiv.innerHTML += `TOP ${i} = ${score}pts<br>`;
-                i++;
-            }
-        }
-
-
-    } else {
-        getlbDiv.textContent = "No data here. Try to play a bit lol."
-    }
-
-})
