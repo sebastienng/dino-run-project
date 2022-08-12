@@ -17,6 +17,7 @@ const getCharacMenu = document.querySelector('#select-character');
 const children = getCharacMenu.querySelectorAll('.hidden-elements');
 const dinoBtns = document.querySelectorAll(".start-game")
 const canvas = document.querySelector('canvas')
+const music = document.querySelector('.music');
 
 const preLoadDino = [new Image(),
 new Image(),
@@ -62,7 +63,10 @@ dinoBtns.forEach((e) => {
         getCharacMenu.classList.toggle('hidden-elements');
         commands.classList.toggle("hidden-elements")
         //console.log(preLoadDino[3]);
+        music.innerHTML += " <audio autoplay src = 'sounds/Bloody Stream [8-Bit; VRC6] - JoJos Bizarre Adventure OP 2.mp3' > </audio > "
+        music.querySelector('audio').volume = 0.1;
         game = new Game(e.classList[1])
+
 
 
     })
@@ -98,6 +102,8 @@ startBtn.addEventListener('click', () => {
 // })
 replayBtn.addEventListener('click', () => {
     game.resetGame();
+    music.innerHTML += " <audio autoplay src = 'sounds/Bloody Stream [8-Bit; VRC6] - JoJos Bizarre Adventure OP 2.mp3' > </audio > "
+    music.querySelector('audio').volume = 0.1;
     game = new Game(game.playerOne.dinoName);
 })
 
@@ -459,7 +465,7 @@ class Game {
 
     getEndGameMenu() {
         const getElements = document.querySelectorAll(".hidden-elements.end-game");
-
+        music.innerHTML = ''
         const getinfo = document.querySelector(".display-player-info>span");
         const scoreFinal = getinfo.textContent;
         getinfo.classList.toggle("hidden-elements")
@@ -475,7 +481,7 @@ class Game {
         const getinfo = document.querySelector(".display-player-info>span");
         getinfo.classList.toggle("hidden-elements")
         this.canvas.classList.toggle("hidden-elements")
-
+        music.innerHTML = ''
         const getElements = document.querySelectorAll(".end-game");
         getElements.forEach((e) => {
             e.classList.toggle("hidden-elements")
@@ -610,16 +616,17 @@ class Game {
     }
 
     backgroundDraw() {
-        //console.log(this.background.width);
+        //Drawing the first background
+        //splitBackground i a position used to know where i need to draw the images
+        //
         this.context.drawImage(this.background, this.splitBackground, 0, 700, 250);
 
-        // draw image 2
+        //Draw image 2
         this.context.drawImage(this.background, this.splitBackground - 700, 0, 700, 250);
 
-        // update image height
-
+        // the position is updated dependind on how fast the game goes 
         this.splitBackground -= this.backgroundSpeed;
-
+        // reseting the position
         if (this.splitBackground < 0) {
             this.splitBackground += this.canvas.width;
         }
@@ -734,6 +741,7 @@ class Ennemy extends GameElement {
     drawPosition() {
         if (this.initCanvasImage) {
 
+
             this.currentFrame = this.currentFrame % this.aniframes;
             this.srcX = this.initCanvasImage.width - this.spriteWidth * (this.currentFrame + this.startFrame + 1)
 
@@ -751,8 +759,6 @@ class Ennemy extends GameElement {
                 this.spriteWidth * 2,
                 this.spriteHeight * 2
             )
-            // And restore the context ready for the next loop  
-            //   this.context.restore();
 
             this.framesDrawn++;
 
@@ -761,8 +767,7 @@ class Ennemy extends GameElement {
                 this.currentFrame++;
                 this.framesDrawn = 0;
             }
-            //this.setScore()
-            // if (this.posX < -25) this.posX = this.canvas.width;
+
         }
 
 
